@@ -1,4 +1,5 @@
 **/obj/
 **/bin/
+**/TestResults/
 *.exe
 *.dll
