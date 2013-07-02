@@ -43,5 +43,10 @@ namespace Titan.Utilities
             return GetParentTypeParameter(baseType, genericType);
 
         }
+
+        public static bool IsNullable(this Type type)
+        {
+            return type.GetGenericTypeDefinition() == typeof(Nullable<>);
+        }
     }
 }

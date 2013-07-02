@@ -22,8 +22,21 @@ namespace Titan.Utilities
             deserializers = new List<ITypeDeserializer>();
             deserializers.Add(new EnumDeserializer());
             deserializers.Add(new InterfaceDeserializer());
-            deserializers.AddRange(typeof(XElement).GetMethods().Where(m => m.Name == "op_Explicit").Select(m => createDelegate(m, typeof(XElement))).ToList());
-            deserializers.AddRange(typeof(XAttribute).GetMethods().Where(m => m.Name == "op_Explicit").Select(m => createDelegate(m, typeof(XAttribute))).ToList());
+            deserializers.Add(new IntegerDeserializer());
+            deserializers.Add(new LongDeserializer());
+            deserializers.Add(new UnsignedIntegerDeserializer());
+            deserializers.Add(new UnsignedLongDeserializer());
+            deserializers.Add(new DateTimeDeserializer());
+            deserializers.Add(new DateTimeOffsetDeserializer());
+            deserializers.Add(new TimeSpanDeserializer());
+            deserializers.Add(new BooleanDesrializer());
+            deserializers.Add(new StringDeserializer());
+            deserializers.Add(new GuidDeserializer());
+            deserializers.Add(new FloatDeserializer());
+            deserializers.Add(new DoubleDeserializer());
+            deserializers.Add(new DecimalDeserializer());
+            deserializers.Add(new FileDeserializer());
+            deserializers.Add(new DirectoryDeserializer());
             deserializers.Add(new GenericListDeserializer());
             deserializers.Add(new NonGenericListDeserializer());
             deserializers.Add(new ComplexTypeDeserializer());
@@ -79,12 +92,6 @@ namespace Titan.Utilities
         public static XObject GetMatchingXObject(ResolutionRequest request)
         {
             return GetMatchingXObjects(request).Single();
-        }
-
-        private static ITypeDeserializer createDelegate(MethodInfo method, Type type)
-        {
-            Type delegateType = typeof(Func<,>).MakeGenericType(type, method.ReturnType);
-            return new BasicTypeDeserializer(method.ReturnType, type, Delegate.CreateDelegate(delegateType, method));
         }
     }
 }
