@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using Titan.Deserializers;
+using Titan.Utilities;
+
+namespace Titan
+{
+    public class XmlDeserializer
+    {
+        public XDocument Document { get; private set; }
+
+        public XmlDeserializer(string xml)
+        {
+            Document = XDocument.Parse(xml);
+        }
+
+        public T Deserialize<T>()
+        {
+            DeserializationRequest request = new DeserializationRequest() { TargetType = typeof(T), Root = Document.Root };
+
+            object value = DeserializationUtilities.Deserialize(request);
+            return (T)value;
+        }
+    }
+}
