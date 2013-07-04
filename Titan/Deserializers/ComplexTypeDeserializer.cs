@@ -29,6 +29,7 @@ namespace Titan.Deserializers
                 resolve.Attributes = property.GetCustomAttributes<Attribute>();
                 resolve.Type = ResolutionType.Property;
                 resolve.Context["property"] = property;
+                resolve.Conventions = request.Conventions;
 
                 XObject matching = DeserializationUtilities.GetMatchingXObject(resolve);
 

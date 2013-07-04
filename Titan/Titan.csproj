@@ -43,11 +43,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\AbstractAttributeHandler.cs" />
+    <Compile Include="Attributes\XmlDictionaryEntryAttributeHandler.cs" />
     <Compile Include="Attributes\IAttributeHandler.cs" />
-    <Compile Include="Attributes\XmlAttributeMappingAttribute.cs" />
-    <Compile Include="Attributes\XmlAttributeMappingAttributeHandler.cs" />
-    <Compile Include="Attributes\XmlElementMappingAttributeHandler.cs" />
-    <Compile Include="Conventions.cs" />
+    <Compile Include="Attributes\XmlAttributeAttributeHandler.cs" />
+    <Compile Include="Attributes\XmlCollectionItemAttribute.cs" />
+    <Compile Include="Attributes\XmlCollectionItemAttributeHandler.cs" />
+    <Compile Include="Attributes\XmlDictionaryEntryAttribute.cs" />
+    <Compile Include="Attributes\XmlElementAttributeHandler.cs" />
+    <Compile Include="Conventions\DefaultConventions.cs" />
+    <Compile Include="Conventions\IConventions.cs" />
+    <Compile Include="Deserializers\ArrayDeserializer.cs" />
     <Compile Include="Deserializers\BooleanDesrializer.cs" />
     <Compile Include="Deserializers\DateTimeOffsetDeserializer.cs" />
     <Compile Include="Deserializers\DateTimeDeserializer.cs" />
@@ -62,6 +67,7 @@
     <Compile Include="Deserializers\GuidDeserializer.cs" />
     <Compile Include="Deserializers\IntegerDeserializer.cs" />
     <Compile Include="Deserializers\InterfaceDeserializer.cs" />
+    <Compile Include="Deserializers\KeyValuePairDeserializer.cs" />
     <Compile Include="Deserializers\LongDeserializer.cs" />
     <Compile Include="Deserializers\NonGenericListDeserializer.cs" />
     <Compile Include="Deserializers\ComplexTypeDeserializer.cs" />
@@ -81,8 +87,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\XObjectExtensions.cs" />
     <Compile Include="XmlDeserializer.cs" />
-    <Compile Include="Attributes\XmlElementMappingAttribute.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

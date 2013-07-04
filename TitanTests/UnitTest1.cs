@@ -5,6 +5,8 @@ using Titan.Attributes;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using System.Xml.Serialization;
+using System.Xml;
 
 namespace TitanTests
 {
@@ -99,6 +101,52 @@ namespace TitanTests
             Assert.IsNotNull(output);
             Assert.AreEqual(output.AttProp, 10);
         }
+
+        [TestMethod]
+        public void TestNestedCollectionDeserializtion()
+        {
+            string xml = @"<lists><list><int>1</int><int>2</int></list><list><int>1</int><int>4</int></list></lists>";
+            XmlDeserializer d = new XmlDeserializer(xml);
+            List<int[]> list = d.Deserialize<List<int[]>>();
+            Assert.IsNotNull(list);
+            Assert.AreEqual(2, list.Count);
+        }
+
+        [TestMethod]
+        public void TestArrayDeserializtion()
+        {
+            string xml = @"<list><int>1</int><int>20</int></list>";
+            XmlDeserializer d = new XmlDeserializer(xml);
+            int[] list = d.Deserialize<int[]>();
+            Assert.IsNotNull(list);
+            Assert.AreEqual(2, list.Length);
+        }
+
+        [TestMethod]
+        public void TestDictionaryDeserializtion()
+        {
+            string xml = "<list><int key=\"a\">100</int><int key=\"b\">20</int></list>";
+            XmlDeserializer d = new XmlDeserializer(xml);
+            Dictionary<string, int> list = d.Deserialize<Dictionary<string, int>>();
+            Assert.IsNotNull(list);
+            Assert.AreEqual(2, list.Count);
+        }
+
+        [TestMethod]
+        public void TestAttributedDictionaryDeserializtion()
+        {
+            string xml = "<root><dict><int><key>a</key><value>100</value></int><int><key>b</key><value>20</value></int></dict></root>";
+            XmlDeserializer d = new XmlDeserializer(xml);
+            TTT list = d.Deserialize<TTT>();
+            Assert.IsNotNull(list);
+            Assert.AreEqual(2, list.dict.Count);
+        }
+    }
+
+    internal class TTT
+    {
+        [XmlDictionaryEntry(KeyName="key", KeyNodeType=XmlNodeType.Element, ValuName="value", ValueNodeType=XmlNodeType.Element)]
+        public Dictionary<string,int> dict { get; set; }
     }
 
     internal class IntCollection : List<int>
@@ -114,7 +162,7 @@ namespace TitanTests
 
     internal class AttTest
     {
-        [XmlAttributeMapping(Name="value")]
+        [XmlAttribute("value")]
         public int AttProp { get; set; }
     }
 
@@ -124,13 +172,13 @@ namespace TitanTests
     }
 
     internal class Person {
-        [XmlElementMapping("name")]
+        [XmlElement("name")]
         public string Name { get; set; }
 
-        [XmlElementMapping("old")]
+        [XmlElement("old")]
         public int Age { get; set; }
 
-        [XmlElementMapping("date")]
+        [XmlElement("date")]
         public DateTime DoB { get; set; }
     }
 

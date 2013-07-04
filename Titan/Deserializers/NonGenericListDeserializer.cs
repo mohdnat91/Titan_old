@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Titan.Attributes;
 using Titan.Utilities;
 
 namespace Titan.Deserializers
@@ -26,13 +27,15 @@ namespace Titan.Deserializers
             ResolutionRequest childResolution = new ResolutionRequest();
             childResolution.Root = ERoot;
             childResolution.Attributes = request.Attributes;
-            childResolution.Type = ResolutionType.Collection;
+            childResolution.Type = ResolutionType.CollectionMember;
+            childResolution.Conventions = request.Conventions;
 
             IEnumerable<XObject> children = DeserializationUtilities.GetMatchingXObjects(childResolution);
 
             foreach (XElement child in children)
             {
                 DeserializationRequest childReq = new DeserializationRequest() { TargetType = typeof(string), Root = child };
+                childReq.Conventions = request.Conventions;
                 object value = DeserializationUtilities.Deserialize(childReq);
                 collection.Add(value);
             }

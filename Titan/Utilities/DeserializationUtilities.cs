@@ -22,6 +22,7 @@ namespace Titan.Utilities
             deserializers = new List<ITypeDeserializer>();
             deserializers.Add(new EnumDeserializer());
             deserializers.Add(new InterfaceDeserializer());
+            deserializers.Add(new ArrayDeserializer());
             deserializers.Add(new IntegerDeserializer());
             deserializers.Add(new LongDeserializer());
             deserializers.Add(new UnsignedIntegerDeserializer());
@@ -37,13 +38,17 @@ namespace Titan.Utilities
             deserializers.Add(new DecimalDeserializer());
             deserializers.Add(new FileDeserializer());
             deserializers.Add(new DirectoryDeserializer());
+            deserializers.Add(new KeyValuePairDeserializer());
+            deserializers.Add(new DictionaryDeserializer());
             deserializers.Add(new GenericListDeserializer());
             deserializers.Add(new NonGenericListDeserializer());
             deserializers.Add(new ComplexTypeDeserializer());
 
             attributeHandlers = new List<IAttributeHandler>();
-            attributeHandlers.Add(new XmlElementMappingAttributeHandler());
-            attributeHandlers.Add(new XmlAttributeMappingAttributeHandler());
+            attributeHandlers.Add(new XmlElementAttributeHandler());
+            attributeHandlers.Add(new XmlAttributeAttributeHandler());
+            attributeHandlers.Add(new XmlCollectionItemAttributeHandler());
+            attributeHandlers.Add(new XmlDictionaryEntryAttributeHandler());
         }
 
         public static object Deserialize(DeserializationRequest request)
@@ -62,7 +67,7 @@ namespace Titan.Utilities
 
             if (info.NodeType == XmlNodeType.None)
             {
-                info.NodeType = Conventions.GetDefaultNodeType(request);
+                info.NodeType = request.Conventions.GetDefaultNodeType(request);
             }
 
             if (info.NodeType == XmlNodeType.Attribute)
@@ -73,8 +78,17 @@ namespace Titan.Utilities
             {
                 return request.Root.Elements(name);
             }
+            else if (info.NodeType == XmlNodeType.Text)
+            {
+                return new List<XObject>() { request.Root };
+            }
 
             return null;
+        }
+
+        public static XObject GetMatchingXObject(ResolutionRequest request)
+        {
+            return GetMatchingXObjects(request).Single();
         }
 
         private static string GetTagName(ResolutionRequest request, ResolutionInfo info)
@@ -85,13 +99,8 @@ namespace Titan.Utilities
             }
             else
             {
-                return Conventions.GetDefaultTagName(request);
+                return request.Conventions.GetDefaultXObjectName(request);
             }
-        }
-
-        public static XObject GetMatchingXObject(ResolutionRequest request)
-        {
-            return GetMatchingXObjects(request).Single();
         }
     }
 }

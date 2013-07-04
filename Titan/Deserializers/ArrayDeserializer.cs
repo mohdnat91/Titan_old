@@ -4,22 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Titan.Attributes;
 using Titan.Utilities;
 
 namespace Titan.Deserializers
 {
-    internal class GenericListDeserializer : ITypeDeserializer
+    internal class ArrayDeserializer : ITypeDeserializer
     {
         public bool CanHandle(DeserializationRequest request)
         {
-            return request.Root is XElement && request.TargetType.IsAssignableToGenericType(typeof(IList<>));
+            return request.Root is XElement && request.TargetType.IsArray;
         }
+
 
         public object Handle(DeserializationRequest request)
         {
-            dynamic collection = Activator.CreateInstance(request.TargetType);
-
             XElement ERoot = request.Root as XElement;
+
+            Type childType = request.TargetType.GetElementType();
 
             ResolutionRequest childResolution = new ResolutionRequest();
             childResolution.Root = ERoot;
@@ -29,15 +31,16 @@ namespace Titan.Deserializers
 
             IEnumerable<XObject> children = DeserializationUtilities.GetMatchingXObjects(childResolution);
 
-            Type childType = request.TargetType.GetParentTypeParameter(typeof(IList<>));
+            dynamic collection = Array.CreateInstance(childType, children.Count());
+
+            int i = 0;
 
             foreach (XElement child in children)
             {
                 DeserializationRequest childReq = new DeserializationRequest() { TargetType = childType, Root = child };
                 childReq.Conventions = request.Conventions;
                 dynamic value = DeserializationUtilities.Deserialize(childReq);
-               
-                collection.Add(value);
+                collection[i++] = value;
             }
 
             return collection;

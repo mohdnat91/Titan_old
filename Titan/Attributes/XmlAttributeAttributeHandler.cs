@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Titan.Utilities;
 
 namespace Titan.Attributes
 {
-    internal class XmlAttributeMappingAttributeHandler : AbstractAttributeHandler<XmlAttributeMappingAttribute>
+    internal class XmlAttributeAttributeHandler : AbstractAttributeHandler<XmlAttributeAttribute>
     {
         public override void Handle(ResolutionRequest request, ResolutionInfo info)
         {
-            XmlAttributeMappingAttribute attribute = (XmlAttributeMappingAttribute)request.Attributes.Where(a => a.GetType() == typeof(XmlAttributeMappingAttribute)).Single();
-            info.Name = attribute.Name;
+            XmlAttributeAttribute attribute = (XmlAttributeAttribute)request.Attributes.Where(a => a.GetType() == typeof(XmlAttributeAttribute)).Single();
+            info.Name = attribute.AttributeName;
             info.NodeType = System.Xml.XmlNodeType.Attribute;
         }
     }

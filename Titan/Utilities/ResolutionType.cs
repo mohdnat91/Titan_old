@@ -8,7 +8,12 @@ namespace Titan.Utilities
 {
     public enum ResolutionType
     {
+        General,
         Property,
-        Collection
+        Collection,
+        CollectionMember,
+        Dictionary,
+        DictionaryKey,
+        DictionaryValue
     }
 }

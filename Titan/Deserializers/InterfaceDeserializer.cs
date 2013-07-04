@@ -9,16 +9,16 @@ namespace Titan.Deserializers
 {
     internal class InterfaceDeserializer : ITypeDeserializer
     {
-        public bool CanHandle(DeserializationRequest requset)
+        public bool CanHandle(DeserializationRequest request)
         {
-            return requset.TargetType.IsInterface;
+            return request.TargetType.IsInterface;
         }
 
-        public object Handle(DeserializationRequest requset)
+        public object Handle(DeserializationRequest request)
         {
-            Type concrete = Conventions.GetDefaultImplementation(requset.TargetType);
-            requset.TargetType = concrete;
-            return DeserializationUtilities.Deserialize(requset);
+            Type concrete = request.Conventions.GetDefaultInterfaceImplementation(request);
+            request.TargetType = concrete;
+            return DeserializationUtilities.Deserialize(request);
         }
     }
 }

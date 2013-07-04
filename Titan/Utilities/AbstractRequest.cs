@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Titan.Conventions;
 
 namespace Titan.Utilities
 {
@@ -25,6 +26,22 @@ namespace Titan.Utilities
             set
             {
                 Context["attributes"] = value;
+            }
+        }
+
+        public IConventions Conventions
+        {
+            get
+            {
+                if (Context.ContainsKey("conventions"))
+                    return Context["conventions"] as IConventions;
+                else
+                    return null;
+            }
+
+            set
+            {
+                Context["conventions"] = value;
             }
         }
 
