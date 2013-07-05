@@ -27,26 +27,26 @@ namespace Titan.Utilities
             return IsAssignableToGenericType(baseType, genericType);
         }
 
-        public static Type GetParentTypeParameter(this Type givenType, Type genericType)
+        public static Type[] GetParentTypeParameters(this Type givenType, Type genericType)
         {
             if (!genericType.IsGenericTypeDefinition) throw new InvalidOperationException("genericType parameter must be a generic type defenition");
 
             foreach (Type it in givenType.GetInterfaces())
             {
                 if (it.IsGenericType && it.GetGenericTypeDefinition() == genericType)
-                    return it.GetGenericArguments().Single();
+                    return it.GetGenericArguments();
             }
 
             Type baseType = givenType.BaseType;
             if (baseType == null) return null;
 
-            return GetParentTypeParameter(baseType, genericType);
+            return GetParentTypeParameters(baseType, genericType);
 
         }
 
         public static bool IsNullable(this Type type)
         {
-            return type.GetGenericTypeDefinition() == typeof(Nullable<>);
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
     }
 }

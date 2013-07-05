@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Titan.Utilities;
+using Titan.Utilities.Exceptions;
 
 namespace Titan.Deserializers
 {
@@ -33,13 +34,21 @@ namespace Titan.Deserializers
                 resolve.Conventions = request.Conventions;
 
                 XObject matching = DeserializationUtilities.GetMatchingXObject(resolve);
-                if (matching == null && property.PropertyType.IsNullable())
+                if (matching == null)
                 {
-                    property.SetValue(target, null);
-                    continue;
+                    if (property.PropertyType.IsNullable())
+                    {
+                        property.SetValue(target, null);
+                        continue;
+                    }
+                    else
+                    {
+                        throw new NoMatchException(string.Format("Did not find a match for '{0}' property", property.Name));
+                    }
                 }
 
                 DeserializationRequest propReq = new DeserializationRequest() { TargetType = property.PropertyType, Root = matching, Attributes = property.GetCustomAttributes<Attribute>() };
+                propReq.Conventions = request.Conventions;
                 object value = DeserializationUtilities.Deserialize(propReq);
                 property.SetValue(target, value);
             }

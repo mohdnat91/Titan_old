@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<people>
+  <person guid="F9168C5E-CEB2-4faa-B6BF-329BF39FA1E4">
+    <name>Mohammad AlNatsheh</name>
+    <dob>01/13/1991</dob>
+    <height>180</height>
+    <weight>100</weight>
+    <ismarried>false</ismarried>
+    <ETA>1:20:13</ETA>
+    <address>
+      <country>Jordan</country>
+      <city>Amman</city>
+    </address>
+    <education>
+      <inst>Ittihad</inst>
+      <inst>UoJ</inst>
+    </education>
+    <possitions>
+      <possition name="P1" value="10.5" />
+      <possition name="P2" value="419.66" />
+    </possitions>
+  </person>
+  <person guid="F9168C5E-CEB2-4faa-B6BF-329BF39FA1E4">
+    <name>Mohammad AlNatsheh</name>
+    <dob>01/13/1991</dob>
+    <height>180</height>
+    <weight>100</weight>
+    <ismarried>false</ismarried>
+    <ETA>1:20:13</ETA>
+    <address>
+      <country>Jordan</country>
+      <city>Amman</city>
+    </address>
+    <education>
+      <inst>Ittihad</inst>
+      <inst>UoJ</inst>
+    </education>
+    <possitions>
+      <possition name="P1" value="10.5" />
+      <possition name="P2" value="419.66" />
+    </possitions>
+  </person>
+</people>

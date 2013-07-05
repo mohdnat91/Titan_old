@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Titan.Utilities;
+using Titan.Utilities.Exceptions;
 
 namespace Titan.Deserializers
 {
@@ -30,6 +31,11 @@ namespace Titan.Deserializers
 
             XObject keyObj = DeserializationUtilities.GetMatchingXObject(keyRequest);
 
+            if (keyObj == null)
+            {
+                throw new NoMatchException(string.Format("Dictionary key resolution failed"));
+            }
+
             DeserializationRequest desReq1 = new DeserializationRequest();
             desReq1.TargetType = keyType;
             desReq1.Root = keyObj;
@@ -45,6 +51,11 @@ namespace Titan.Deserializers
             valueRequest.Type = ResolutionType.DictionaryValue;
 
             XObject valueObj = DeserializationUtilities.GetMatchingXObject(valueRequest);
+
+            if (valueObj == null)
+            {
+                throw new NoMatchException(string.Format("Dictionary value resolution failed"));
+            }
 
             DeserializationRequest desReq2 = new DeserializationRequest();
             desReq2.TargetType = valueType;

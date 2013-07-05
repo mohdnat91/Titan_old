@@ -21,9 +21,8 @@ namespace Titan.Deserializers
             dynamic dictionary = Activator.CreateInstance(requset.TargetType);
             XElement ERoot = requset.Root as XElement;
 
-            Type keyType = requset.TargetType.GetGenericArguments()[0];
-            Type valueType = requset.TargetType.GetGenericArguments()[1];
-            Type kvp = typeof(KeyValuePair<,>).MakeGenericType(keyType, valueType);
+            Type[] types = requset.TargetType.GetParentTypeParameters(typeof(IDictionary<,>));
+            Type kvp = typeof(KeyValuePair<,>).MakeGenericType(types);
 
             IEnumerable<XElement> children = ERoot.Elements();
 

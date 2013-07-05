@@ -7,6 +7,7 @@ using System.Collections;
 using System.Linq;
 using System.Xml.Serialization;
 using System.Xml;
+using System.IO;
 
 namespace TitanTests
 {
@@ -28,7 +29,7 @@ namespace TitanTests
         {
             string xml = @"<person><name>Mohammad</name><old>25</old><date>2-5-1999</date></person>";
             XmlDeserializer d = new XmlDeserializer(xml);
-            Person person = d.Deserialize<Person>();
+            aPerson person = d.Deserialize<aPerson>();
             Assert.IsNotNull(person);
             Assert.AreEqual("Mohammad", person.Name);
             Assert.AreEqual(25, person.Age);
@@ -153,6 +154,16 @@ namespace TitanTests
             Assert.AreEqual(null, list.Prop2);
             Assert.AreEqual(43, list.Prop3);
         }
+
+        [TestMethod]
+        public void TestComplex()
+        {
+            string xml = (new StreamReader("XMLFile1.xml")).ReadToEnd();
+            XmlDeserializer d = new XmlDeserializer(xml);
+            List<Person> people = d.Deserialize<List<Person>>();
+            Assert.AreEqual(2, people.Count);
+        }
+
     }
 
     internal class NUL
@@ -190,7 +201,7 @@ namespace TitanTests
         public T Prop { get; set; }
     }
 
-    internal class Person {
+    internal class aPerson {
         [XmlElement("name")]
         public string Name { get; set; }
 
@@ -207,6 +218,32 @@ namespace TitanTests
 
         public int Age { get; set; }
 
-        public Person person { get; set; }
+        public aPerson person { get; set; }
+    }
+
+    public class Person
+    {
+        [XmlAttribute("guid")]
+        public Guid guid { get; set; }
+        public string Name { get; set; }
+        public DateTime DoB { get; set; }
+        public long Height { get; set; }    
+        public int Weight { get; set; }
+        public bool IsMarried { get; set; }
+        [XmlElement("ETA")]
+        public TimeSpan ETA { get; set; }
+        [XmlElement("address")]
+        public Address AddressInfo { get; set; }
+        [XmlCollectionItem("inst", XmlNodeType.Element)]
+        public IEnumerable<string> Education { get; set; }
+        [XmlDictionaryEntry(KeyName="name", KeyNodeType=XmlNodeType.Attribute, ValueName="value", ValueNodeType=XmlNodeType.Attribute)]
+        public Dictionary<string,decimal> Possitions { get; set; }
+
+    }
+
+    public class Address
+    {
+        public string Country { get; set; }
+        public string City { get; set; }
     }
 }

@@ -29,7 +29,7 @@ namespace Titan.Deserializers
 
             IEnumerable<XObject> children = DeserializationUtilities.GetMatchingXObjects(childResolution);
 
-            Type childType = request.TargetType.GetParentTypeParameter(typeof(IList<>));
+            Type childType = request.TargetType.GetParentTypeParameters(typeof(IList<>))[0];
 
             foreach (XElement child in children)
             {
