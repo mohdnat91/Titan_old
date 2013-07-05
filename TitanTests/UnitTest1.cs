@@ -141,11 +141,30 @@ namespace TitanTests
             Assert.IsNotNull(list);
             Assert.AreEqual(2, list.dict.Count);
         }
+
+        [TestMethod]
+        public void TestNullable()
+        {
+            string xml = "<ints><prop1>1</prop1><prop3>43</prop3></ints>";
+            XmlDeserializer d = new XmlDeserializer(xml);
+            NUL list = d.Deserialize<NUL>();
+            Assert.IsNotNull(list);
+            Assert.AreEqual(1, list.Prop1);
+            Assert.AreEqual(null, list.Prop2);
+            Assert.AreEqual(43, list.Prop3);
+        }
+    }
+
+    internal class NUL
+    {
+        public int Prop1 { get; set; }
+        public int? Prop2 { get; set; }
+        public int Prop3 { get; set; }
     }
 
     internal class TTT
     {
-        [XmlDictionaryEntry(KeyName="key", KeyNodeType=XmlNodeType.Element, ValuName="value", ValueNodeType=XmlNodeType.Element)]
+        [XmlDictionaryEntry(KeyName="key", KeyNodeType=XmlNodeType.Element, ValueName="value", ValueNodeType=XmlNodeType.Element)]
         public Dictionary<string,int> dict { get; set; }
     }
 

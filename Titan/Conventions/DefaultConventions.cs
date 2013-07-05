@@ -13,27 +13,58 @@ namespace Titan.Conventions
 {
     public class DefaultConventions : IConventions
     {
-        public string GetDefaultXObjectName(AbstractRequest request)
-        {
-            ResolutionRequest req = request as ResolutionRequest;
-            if (req.Type == ResolutionType.Property)
-            {
-                return (request.Context["property"] as PropertyInfo).Name.ToLower();
-            }
-            else if (req.Type == ResolutionType.CollectionMember)
-            {
-                return GetDefaultCollectionMemberTagName(req.Root);
-            }
-            else if (req.Type == ResolutionType.DictionaryKey)
-            {
-                return "key";
-            }
-            else if (req.Type == ResolutionType.DictionaryValue)
-            {
-                return req.Root.Name.LocalName;
-            }
+        private Dictionary<ResolutionType, Func<ResolutionRequest, ResolutionInfo>> resolutions;
 
-            return null;
+        public DefaultConventions()
+        {
+            resolutions = new Dictionary<ResolutionType, Func<ResolutionRequest, ResolutionInfo>>();
+            resolutions.Add(ResolutionType.Property, GetPropertyResolution);
+            resolutions.Add(ResolutionType.CollectionItem, GetCollectionItemResolution);
+            resolutions.Add(ResolutionType.DictionaryKey, GetDictionaryKeyResoltion);
+            resolutions.Add(ResolutionType.DictionaryValue, GetDictionaryValueResolution);
+        }
+
+        private ResolutionInfo GetDictionaryValueResolution(ResolutionRequest arg)
+        {
+            ResolutionInfo info = new ResolutionInfo();
+            info.Predicate = null;
+            info.NodeType = XmlNodeType.Text;
+            return info;
+        }
+
+        private ResolutionInfo GetDictionaryKeyResoltion(ResolutionRequest arg)
+        {
+            ResolutionInfo info = new ResolutionInfo();
+            info.Predicate = (x => x.GetName() == "key");
+            info.NodeType = XmlNodeType.Attribute;
+            return info;
+        }
+
+        private ResolutionInfo GetCollectionItemResolution(ResolutionRequest request)
+        {
+            ResolutionInfo info = new ResolutionInfo();
+
+            XElement element = request.Root;
+
+            string firstChildName = element.Elements().First().Name.LocalName;
+            info.Predicate = (x => x.GetName() == firstChildName);
+
+            info.NodeType = XmlNodeType.Element;
+            return info;
+        }
+
+        private ResolutionInfo GetPropertyResolution(ResolutionRequest request)
+        {
+            ResolutionInfo info = new ResolutionInfo();
+            string propName = ((PropertyInfo)request.Context["property"]).Name.ToLower();
+            info.Predicate = (x => x.GetName() == propName);
+            info.NodeType = XmlNodeType.Element;
+            return info;
+        }
+
+        public ResolutionInfo GetDefaultResolution(ResolutionRequest request)
+        {
+            return resolutions[request.Type](request);
         }
 
         public Type GetDefaultInterfaceImplementation(AbstractRequest request)
@@ -55,29 +86,6 @@ namespace Titan.Conventions
                 }
             }
 
-            return null;
-        }
-
-        public XmlNodeType GetDefaultNodeType(AbstractRequest request)
-        {
-            if (request is ResolutionRequest && ((ResolutionRequest)request).Type == ResolutionType.DictionaryKey)
-            {
-                return XmlNodeType.Attribute;
-            }
-            if (request is ResolutionRequest && ((ResolutionRequest)request).Type == ResolutionType.DictionaryValue)
-            {
-                return XmlNodeType.Text;
-            }
-            return XmlNodeType.Element;
-        }
-
-        private string GetDefaultCollectionMemberTagName(XElement element)
-        {
-            string firstChildName = element.Elements().First().Name.LocalName;
-            if (element.Elements().All(e => e.Name.LocalName == firstChildName))
-            {
-                return firstChildName;
-            }
             return null;
         }
     }

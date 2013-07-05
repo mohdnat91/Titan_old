@@ -10,8 +10,7 @@ namespace Titan.Conventions
 {
     public interface IConventions
     {
-        string GetDefaultXObjectName(AbstractRequest request);
+        ResolutionInfo GetDefaultResolution(ResolutionRequest request);
         Type GetDefaultInterfaceImplementation(AbstractRequest request);
-        XmlNodeType GetDefaultNodeType(AbstractRequest request);
     }
 }

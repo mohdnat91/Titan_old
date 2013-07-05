@@ -18,14 +18,7 @@ namespace Titan.Deserializers
         {
             bool value;
             if (bool.TryParse(requset.Root.GetValue(), out value)) return value;
-            if (requset.TargetType.IsNullable())
-            {
-                return null;
-            }
-            else
-            {
-                throw new InvalidCastException();
-            }
+            throw new Exception();
         }
     }
 }

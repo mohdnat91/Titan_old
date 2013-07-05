@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using Titan.Utilities;
 
 namespace Titan.Deserializers
@@ -32,6 +33,11 @@ namespace Titan.Deserializers
                 resolve.Conventions = request.Conventions;
 
                 XObject matching = DeserializationUtilities.GetMatchingXObject(resolve);
+                if (matching == null && property.PropertyType.IsNullable())
+                {
+                    property.SetValue(target, null);
+                    continue;
+                }
 
                 DeserializationRequest propReq = new DeserializationRequest() { TargetType = property.PropertyType, Root = matching, Attributes = property.GetCustomAttributes<Attribute>() };
                 object value = DeserializationUtilities.Deserialize(propReq);

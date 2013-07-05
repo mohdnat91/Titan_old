@@ -42,14 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\AbstractAttributeHandler.cs" />
-    <Compile Include="Attributes\XmlDictionaryEntryAttributeHandler.cs" />
-    <Compile Include="Attributes\IAttributeHandler.cs" />
-    <Compile Include="Attributes\XmlAttributeAttributeHandler.cs" />
     <Compile Include="Attributes\XmlCollectionItemAttribute.cs" />
-    <Compile Include="Attributes\XmlCollectionItemAttributeHandler.cs" />
     <Compile Include="Attributes\XmlDictionaryEntryAttribute.cs" />
-    <Compile Include="Attributes\XmlElementAttributeHandler.cs" />
     <Compile Include="Conventions\DefaultConventions.cs" />
     <Compile Include="Conventions\IConventions.cs" />
     <Compile Include="Deserializers\ArrayDeserializer.cs" />
@@ -77,6 +71,11 @@
     <Compile Include="Deserializers\TypeDeserializer.cs" />
     <Compile Include="Deserializers\UnsignedIntegerDeserializer.cs" />
     <Compile Include="Deserializers\UnsignedLongDeserializer.cs" />
+    <Compile Include="Resolution\CollectionItemResolutionHandler.cs" />
+    <Compile Include="Resolution\DictionaryKeyResolutionHandler.cs" />
+    <Compile Include="Resolution\DictionaryValueResolutionHandler.cs" />
+    <Compile Include="Resolution\IResolutionHandler.cs" />
+    <Compile Include="Resolution\PropertyResolutionHandler.cs" />
     <Compile Include="Utilities\AbstractRequest.cs" />
     <Compile Include="Utilities\DeserializationRequest.cs" />
     <Compile Include="Utilities\DeserializationUtilities.cs" />

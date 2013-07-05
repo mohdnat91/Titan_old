@@ -10,9 +10,7 @@ namespace Titan.Utilities
     {
         General,
         Property,
-        Collection,
-        CollectionMember,
-        Dictionary,
+        CollectionItem,
         DictionaryKey,
         DictionaryValue
     }

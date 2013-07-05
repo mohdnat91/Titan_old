@@ -26,7 +26,7 @@ namespace Titan.Deserializers
             ResolutionRequest childResolution = new ResolutionRequest();
             childResolution.Root = ERoot;
             childResolution.Attributes = request.Attributes;
-            childResolution.Type = ResolutionType.CollectionMember;
+            childResolution.Type = ResolutionType.CollectionItem;
             childResolution.Conventions = request.Conventions;
 
             IEnumerable<XObject> children = DeserializationUtilities.GetMatchingXObjects(childResolution);

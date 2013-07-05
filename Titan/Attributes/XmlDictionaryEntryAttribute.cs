@@ -11,7 +11,7 @@ namespace Titan.Attributes
     public sealed class XmlDictionaryEntryAttribute : Attribute
     {
         public string KeyName { get; set; }
-        public string ValuName { get; set; }
+        public string ValueName { get; set; }
         public XmlNodeType KeyNodeType { get; set; }
         public XmlNodeType ValueNodeType { get; set; }
 

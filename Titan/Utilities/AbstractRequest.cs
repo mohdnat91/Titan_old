@@ -45,6 +45,11 @@ namespace Titan.Utilities
             }
         }
 
+        public T Attribute<T>() where T : Attribute
+        {
+            return (T) Attributes.SingleOrDefault(a => a is T);
+        }
+
         public AbstractRequest()
         {
             Context = new Dictionary<string, object>();

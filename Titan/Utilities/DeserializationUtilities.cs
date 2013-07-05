@@ -9,13 +9,14 @@ using System.Xml;
 using System.Xml.Linq;
 using Titan.Attributes;
 using Titan.Deserializers;
+using Titan.Resolution;
 
 namespace Titan.Utilities
 {
     public static class DeserializationUtilities
     {
         private static List<ITypeDeserializer> deserializers;
-        private static List<IAttributeHandler> attributeHandlers;
+        private static Dictionary<ResolutionType, IResolutionHandler> resolutionHandlers;
 
         static DeserializationUtilities()
         {
@@ -44,11 +45,11 @@ namespace Titan.Utilities
             deserializers.Add(new NonGenericListDeserializer());
             deserializers.Add(new ComplexTypeDeserializer());
 
-            attributeHandlers = new List<IAttributeHandler>();
-            attributeHandlers.Add(new XmlElementAttributeHandler());
-            attributeHandlers.Add(new XmlAttributeAttributeHandler());
-            attributeHandlers.Add(new XmlCollectionItemAttributeHandler());
-            attributeHandlers.Add(new XmlDictionaryEntryAttributeHandler());
+            resolutionHandlers = new Dictionary<ResolutionType, IResolutionHandler>();
+            resolutionHandlers.Add(ResolutionType.Property, new PropertyResolutionHandler());
+            resolutionHandlers.Add(ResolutionType.CollectionItem, new CollectionItemResolutionHandler());
+            resolutionHandlers.Add(ResolutionType.DictionaryKey, new DictionaryKeyResolutionHandler());
+            resolutionHandlers.Add(ResolutionType.DictionaryValue, new DictionaryValueResolutionHandler());
         }
 
         public static object Deserialize(DeserializationRequest request)
@@ -59,28 +60,23 @@ namespace Titan.Utilities
 
         public static IEnumerable<XObject> GetMatchingXObjects(ResolutionRequest request)
         {
-            ResolutionInfo info = new ResolutionInfo();
-
-            attributeHandlers.Where(h => h.CanHandle(request)).ToList().ForEach(h => h.Handle(request, info));
-
-            string name = GetTagName(request, info);
-
-            if (info.NodeType == XmlNodeType.None)
-            {
-                info.NodeType = request.Conventions.GetDefaultNodeType(request);
-            }
+            ResolutionInfo info = resolutionHandlers[request.Type].Handle(request);
 
             if (info.NodeType == XmlNodeType.Attribute)
             {
-                return request.Root.Attributes(name);
+                return request.Root.Attributes().Where(info.Predicate);
             }
             else if (info.NodeType == XmlNodeType.Element)
             {
-                return request.Root.Elements(name);
+                return request.Root.Elements().Where(info.Predicate);
             }
             else if (info.NodeType == XmlNodeType.Text)
             {
                 return new List<XObject>() { request.Root };
+            }
+            else if (info.NodeType == XmlNodeType.None)
+            {
+                return Enumerable.Empty<XObject>();
             }
 
             return null;
@@ -88,19 +84,7 @@ namespace Titan.Utilities
 
         public static XObject GetMatchingXObject(ResolutionRequest request)
         {
-            return GetMatchingXObjects(request).Single();
-        }
-
-        private static string GetTagName(ResolutionRequest request, ResolutionInfo info)
-        {
-            if (info.Name != null)
-            {
-                return info.Name;
-            }
-            else
-            {
-                return request.Conventions.GetDefaultXObjectName(request);
-            }
+            return GetMatchingXObjects(request).SingleOrDefault();
         }
     }
 }

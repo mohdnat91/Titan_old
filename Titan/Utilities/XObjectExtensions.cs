@@ -22,5 +22,18 @@ namespace Titan.Utilities
                     return null;
             }
         }
+
+        public static string GetName(this XObject node)
+        {
+            switch (node.NodeType)
+            {
+                case XmlNodeType.Attribute:
+                    return ((XAttribute)node).Name.LocalName;
+                case XmlNodeType.Element:
+                    return ((XElement)node).Name.LocalName;
+                default:
+                    return null;
+            }
+        }
     }
 }
