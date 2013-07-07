@@ -11,17 +11,17 @@ namespace Titan.Deserializers
 {
     internal class DictionaryDeserializer : ITypeDeserializer
     {
-        public bool CanHandle(DeserializationRequest requset)
+        public bool CanHandle(DeserializationRequest request)
         {
-            return requset.Root is XElement && requset.TargetType.IsAssignableToGenericType(typeof(IDictionary<,>));
+            return request.Root is XElement && request.TargetType.IsAssignableToGenericType(typeof(IDictionary<,>));
         }
 
-        public object Handle(DeserializationRequest requset)
+        public object Handle(DeserializationRequest request)
         {
-            dynamic dictionary = Activator.CreateInstance(requset.TargetType);
-            XElement ERoot = requset.Root as XElement;
+            dynamic dictionary = Activator.CreateInstance(request.TargetType);
+            XElement ERoot = request.Root as XElement;
 
-            Type[] types = requset.TargetType.GetParentTypeParameters(typeof(IDictionary<,>));
+            Type[] types = request.TargetType.GetParentTypeParameters(typeof(IDictionary<,>));
             Type kvp = typeof(KeyValuePair<,>).MakeGenericType(types);
 
             IEnumerable<XElement> children = ERoot.Elements();
@@ -29,11 +29,12 @@ namespace Titan.Deserializers
             foreach (XElement child in children)
             {
                 DeserializationRequest childReq = new DeserializationRequest();
-                childReq.Conventions = requset.Conventions;
+                childReq.Conventions = request.Conventions;
                 childReq.Root = child;
-                childReq.Attributes = requset.Attributes;
+                childReq.Attributes = request.Attributes;
                 childReq.TargetType = kvp;
-                dynamic value = DeserializationUtilities.Deserialize(childReq);
+                childReq.Visitor = request.Visitor;
+                dynamic value = request.Visitor.Deserialize(childReq);
                 dictionary[value.Key] = value.Value;
             }
 

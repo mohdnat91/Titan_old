@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Titan.Utilities;
+using Titan.Utilities.Exceptions;
 
 namespace Titan.Deserializers
 {
@@ -16,9 +18,31 @@ namespace Titan.Deserializers
 
         public object Handle(DeserializationRequest request)
         {
-            Type concrete = request.Conventions.GetDefaultInterfaceImplementation(request);
+
+            Type concrete = GetGivenType(request) ?? request.Conventions.GetDefaultInterfaceImplementation(request);
+            if (concrete == null)
+            {
+                throw new DeserializationException(string.Format("No implementation was found for interface '{0}'", request.TargetType));
+            }
             request.TargetType = concrete;
-            return DeserializationUtilities.Deserialize(request);
+            return request.Visitor.Deserialize(request);
+        }
+
+        private Type GetGivenType(DeserializationRequest request)
+        {
+            XmlElementAttribute element = request.Attribute<XmlElementAttribute>();
+            if (element != null && element.Type != null)
+            {
+                return element.Type;
+            }
+
+            XmlAttributeAttribute attribute = request.Attribute<XmlAttributeAttribute>();
+            if (attribute != null && attribute.Type != null)
+            {
+                return attribute.Type;
+            }
+
+            return null;
         }
     }
 }

@@ -41,8 +41,9 @@ namespace Titan.Deserializers
             desReq1.Root = keyObj;
             desReq1.Conventions = request.Conventions;
             desReq1.Attributes = request.Attributes;
+            desReq1.Visitor = request.Visitor;
 
-            dynamic key = DeserializationUtilities.Deserialize(desReq1);
+            dynamic key = request.Visitor.Deserialize(desReq1);
 
             ResolutionRequest valueRequest = new ResolutionRequest();
             valueRequest.Attributes = request.Attributes;
@@ -62,8 +63,9 @@ namespace Titan.Deserializers
             desReq2.Root = valueObj;
             desReq2.Conventions = request.Conventions;
             desReq2.Attributes = request.Attributes;
+            desReq2.Visitor = request.Visitor;
 
-            dynamic value = DeserializationUtilities.Deserialize(desReq2);
+            dynamic value = request.Visitor.Deserialize(desReq2);
 
             dynamic kvp = typeof(KeyValuePair<,>).MakeGenericType(keyType, valueType).GetConstructor(new[] { keyType, valueType }).Invoke(new[] { key, value });
 

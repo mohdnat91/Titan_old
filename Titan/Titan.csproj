@@ -74,6 +74,8 @@
     <Compile Include="Utilities\TypeExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\XObjectExtensions.cs" />
+    <Compile Include="Visitors\DefaultDeserializationVisitor.cs" />
+    <Compile Include="Visitors\IDeserializationVisitor.cs" />
     <Compile Include="XmlDeserializer.cs" />
   </ItemGroup>
   <ItemGroup />

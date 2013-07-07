@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using Titan.Conventions;
 using Titan.Deserializers;
 using Titan.Utilities;
+using Titan.Visitors;
 
 namespace Titan
 {
@@ -29,7 +30,9 @@ namespace Titan
         {
             DeserializationRequest request = new DeserializationRequest() { TargetType = typeof(T), Root = Document.Root };
             request.Conventions = new DefaultConventions();
-            object value = DeserializationUtilities.Deserialize(request);
+            IDeserializationVisitor visitor = new DefaultDeserializationVisitor();
+            request.Visitor = visitor;
+            object value = visitor.Deserialize(request);
             return (T)value;
         }
     }

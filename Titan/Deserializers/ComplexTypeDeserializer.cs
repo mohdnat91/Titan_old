@@ -49,7 +49,9 @@ namespace Titan.Deserializers
 
                 DeserializationRequest propReq = new DeserializationRequest() { TargetType = property.PropertyType, Root = matching, Attributes = property.GetCustomAttributes<Attribute>() };
                 propReq.Conventions = request.Conventions;
-                object value = DeserializationUtilities.Deserialize(propReq);
+                propReq.Visitor = request.Visitor;
+
+                object value = request.Visitor.Deserialize(propReq);
                 property.SetValue(target, value);
             }
 

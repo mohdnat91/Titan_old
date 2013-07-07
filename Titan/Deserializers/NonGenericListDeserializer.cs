@@ -36,7 +36,8 @@ namespace Titan.Deserializers
             {
                 DeserializationRequest childReq = new DeserializationRequest() { TargetType = typeof(string), Root = child };
                 childReq.Conventions = request.Conventions;
-                object value = DeserializationUtilities.Deserialize(childReq);
+                childReq.Visitor = request.Visitor;
+                object value = request.Visitor.Deserialize(childReq);
                 collection.Add(value);
             }
 
