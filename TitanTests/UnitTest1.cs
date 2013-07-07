@@ -175,7 +175,8 @@ namespace TitanTests
 
     internal class TTT
     {
-        [XmlDictionaryEntry(KeyName="key", KeyNodeType=XmlNodeType.Element, ValueName="value", ValueNodeType=XmlNodeType.Element)]
+        [XmlDictionaryKey(Name = "key", NodeType = XmlNodeType.Element)]
+        [XmlDictionaryValue(Name = "value", NodeType = XmlNodeType.Element)]
         public Dictionary<string,int> dict { get; set; }
     }
 
@@ -234,9 +235,12 @@ namespace TitanTests
         public TimeSpan ETA { get; set; }
         [XmlElement("address")]
         public Address AddressInfo { get; set; }
-        [XmlCollectionItem("inst", XmlNodeType.Element)]
+
+        [XmlCollectionItem(Name="inst", NodeType=XmlNodeType.Element)]
         public IEnumerable<string> Education { get; set; }
-        [XmlDictionaryEntry(KeyName="name", KeyNodeType=XmlNodeType.Attribute, ValueName="value", ValueNodeType=XmlNodeType.Attribute)]
+
+        [XmlDictionaryKey(Name = "name", NodeType = XmlNodeType.Attribute)]
+        [XmlDictionaryValue(Name = "value", NodeType = XmlNodeType.Attribute)]
         public Dictionary<string,decimal> Possitions { get; set; }
 
     }

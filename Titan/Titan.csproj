@@ -43,7 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\XmlCollectionItemAttribute.cs" />
-    <Compile Include="Attributes\XmlDictionaryEntryAttribute.cs" />
+    <Compile Include="Attributes\XmlDictionaryKeyAttribute.cs" />
+    <Compile Include="Attributes\XmlDictionaryValueAttribute.cs" />
     <Compile Include="Conventions\DefaultConventions.cs" />
     <Compile Include="Conventions\IConventions.cs" />
     <Compile Include="Deserializers\ArrayDeserializer.cs" />

@@ -8,13 +8,13 @@ using System.Xml;
 namespace Titan.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
-    sealed public class XmlCollectionItemAttribute : Attribute
+    public sealed class XmlDictionaryKeyAttribute : Attribute
     {
         public string Name { get; set; }
         public XmlNodeType NodeType { get; set; }
         public int Level { get; set; }
 
-        public XmlCollectionItemAttribute()
+        public XmlDictionaryKeyAttribute()
         {
             Name = null;
             NodeType = XmlNodeType.None;

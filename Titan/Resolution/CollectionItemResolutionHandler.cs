@@ -16,7 +16,7 @@ namespace Titan.Resolution
             if (attribute != null)
             {
                 ResolutionInfo info = new ResolutionInfo();
-                info.Predicate = (x => x.GetName() == attribute.ItemName);
+                info.Predicate = (x => x.GetName() == attribute.Name);
                 info.NodeType = attribute.NodeType;
                 return info;
             }

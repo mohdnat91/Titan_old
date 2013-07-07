@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using Titan.Attributes;
 using Titan.Utilities;
 
@@ -12,16 +13,16 @@ namespace Titan.Resolution
     {
         public ResolutionInfo Handle(ResolutionRequest request)
         {
-            XmlDictionaryEntryAttribute attribute = request.Attribute<XmlDictionaryEntryAttribute>();
+            ResolutionInfo info = request.Conventions.GetDefaultResolution(request);
+
+            XmlDictionaryKeyAttribute attribute = request.Attribute<XmlDictionaryKeyAttribute>();
             if (attribute != null)
             {
-                ResolutionInfo info = new ResolutionInfo();
-                info.Predicate = (x => x.GetName() == attribute.KeyName);
-                info.NodeType = attribute.KeyNodeType;
-                return info;
+                if (!string.IsNullOrWhiteSpace(attribute.Name)) info.Predicate = (x => x.GetName() == attribute.Name);
+                if (attribute.NodeType != XmlNodeType.None) info.NodeType = attribute.NodeType;
             }
 
-            return request.Conventions.GetDefaultResolution(request);
+            return info;
         }
     }
 }
