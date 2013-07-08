@@ -30,13 +30,13 @@ namespace Titan.Deserializers
 
         private Type GetGivenType(DeserializationRequest request)
         {
-            XmlElementAttribute element = request.Attribute<XmlElementAttribute>();
+            XmlElementAttribute element = request.GetAttribute<XmlElementAttribute>();
             if (element != null && element.Type != null)
             {
                 return element.Type;
             }
 
-            XmlAttributeAttribute attribute = request.Attribute<XmlAttributeAttribute>();
+            XmlAttributeAttribute attribute = request.GetAttribute<XmlAttributeAttribute>();
             if (attribute != null && attribute.Type != null)
             {
                 return attribute.Type;

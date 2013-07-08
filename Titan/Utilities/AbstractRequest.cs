@@ -13,14 +13,20 @@ namespace Titan.Utilities
         public virtual XObject Root { get; set; }
         public Dictionary<string, object> Context { get; set; }
 
+        public T Get<T>(string key)
+        {
+            if (Context.ContainsKey(key))
+            {
+                return (T)Context[key];
+            }
+            return default(T);
+        }
+
         public IEnumerable<Attribute> Attributes
         {
             get
             {
-                if (Context.ContainsKey("attributes"))
-                    return Context["attributes"] as IEnumerable<Attribute>;
-                else
-                    return Enumerable.Empty<Attribute>();
+                return Get<IEnumerable<Attribute>>("attributes");
             }
 
             set
@@ -33,10 +39,7 @@ namespace Titan.Utilities
         {
             get
             {
-                if (Context.ContainsKey("conventions"))
-                    return Context["conventions"] as IConventions;
-                else
-                    return null;
+                return Get<IConventions>("conventions");
             }
 
             set
@@ -45,9 +48,14 @@ namespace Titan.Utilities
             }
         }
 
-        public T Attribute<T>() where T : Attribute
+        public T GetAttribute<T>() where T : Attribute
         {
-            return (T) Attributes.SingleOrDefault(a => a is T);
+            return GetAttributes<T>().Single();
+        }
+
+        public IEnumerable<T> GetAttributes<T>() where T : Attribute
+        {
+            return Attributes.Where(a => a is T).Select(a => a as T);
         }
 
         public AbstractRequest()
@@ -55,5 +63,9 @@ namespace Titan.Utilities
             Context = new Dictionary<string, object>();
         }
 
+        public AbstractRequest(Dictionary<string, object> context)
+        {
+            Context = new Dictionary<string,object>(context);
+        }
     }
 }

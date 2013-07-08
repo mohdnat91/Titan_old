@@ -15,7 +15,7 @@ namespace Titan.Utilities
         {
             get
             {
-                return Context.ContainsKey("deserialization_visitor") ? (IDeserializationVisitor) Context["deserialization_visitor"] : null;
+                return Get<IDeserializationVisitor>("deserialization_visitor");
             }
             set
             {
@@ -23,5 +23,6 @@ namespace Titan.Utilities
             }
 
         }
+
     }
 }

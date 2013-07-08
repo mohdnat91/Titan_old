@@ -224,7 +224,7 @@ namespace TitanTests
 
     public class Person
     {
-        [XmlAttribute("guid")]
+        [XmlAttribute]
         public Guid guid { get; set; }
         public string Name { get; set; }
         public DateTime DoB { get; set; }
