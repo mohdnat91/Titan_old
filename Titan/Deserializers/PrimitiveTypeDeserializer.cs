@@ -10,11 +10,11 @@ namespace Titan.Deserializers
 {
     internal class PrimitiveTypeDeserializer : ITypeDeserializer
     {
-        private Dictionary<Type, Func<DeserializationRequest, object>> primitives;
+        private Dictionary<Type, Func<XObject, object>> primitives;
 
         public PrimitiveTypeDeserializer()
         {
-            primitives = new Dictionary<Type, Func<DeserializationRequest, object>>();
+            primitives = new Dictionary<Type, Func<XObject, object>>();
             primitives.Add(typeof(bool), Boolean);
             primitives.Add(typeof(byte), Byte);
             primitives.Add(typeof(sbyte), SByte);
@@ -34,15 +34,15 @@ namespace Titan.Deserializers
             primitives.Add(typeof(Guid), Guid);
         }
 
-        public bool CanHandle(DeserializationRequest request)
+        public bool CanHandle(Type type, XObject xobject)
         {
-            return primitives.ContainsKey(NormalizeType(request.TargetType));
+            return primitives.ContainsKey(NormalizeType(type));
         }
 
-        public object Handle(DeserializationRequest request)
+        public object Handle(Type type, XObject xobject, Metadata metadata)
         {
-            Type type = NormalizeType(request.TargetType);
-            return primitives[type](request);
+            Type normalized = NormalizeType(type);
+            return primitives[normalized](xobject);
         }
 
         private Type NormalizeType(Type type)
@@ -54,127 +54,127 @@ namespace Titan.Deserializers
             return type;
         }
 
-        private object Boolean(DeserializationRequest requset)
+        private object Boolean(XObject xobject)
         {
             bool value;
-            if (bool.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (bool.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 
-        private object Double(DeserializationRequest requset)
+        private object Double(XObject xobject)
         {
             double value;
-            if (double.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (double.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 
-        private object Single(DeserializationRequest requset)
+        private object Single(XObject xobject)
         {
             float value;
-            if (float.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (float.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 
-        private object Int32(DeserializationRequest requset)
+        private object Int32(XObject xobject)
         {
             int value;
-            if (int.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (int.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 
-        private object Int64(DeserializationRequest requset)
+        private object Int64(XObject xobject)
         {
             long value;
-            if (long.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (long.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 
-        private object UInt32(DeserializationRequest requset)
+        private object UInt32(XObject xobject)
         {
             uint value;
-            if (uint.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (uint.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 
-        private object UInt64(DeserializationRequest requset)
+        private object UInt64(XObject xobject)
         {
             ulong value;
-            if (ulong.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (ulong.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 
-        private object Byte(DeserializationRequest requset)
+        private object Byte(XObject xobject)
         {
             ulong value;
-            if (ulong.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (ulong.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 
-        private object SByte(DeserializationRequest requset)
+        private object SByte(XObject xobject)
         {
             ulong value;
-            if (ulong.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (ulong.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 
-        private object Int16(DeserializationRequest requset)
+        private object Int16(XObject xobject)
         {
             ulong value;
-            if (ulong.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (ulong.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 
-        private object UInt16(DeserializationRequest requset)
+        private object UInt16(XObject xobject)
         {
             ulong value;
-            if (ulong.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (ulong.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 
-        private object Char(DeserializationRequest requset)
+        private object Char(XObject xobject)
         {
             ulong value;
-            if (ulong.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (ulong.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 
-        private object TimeSpan(DeserializationRequest requset)
+        private object TimeSpan(XObject xobject)
         {
             TimeSpan value;
-            if (System.TimeSpan.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (System.TimeSpan.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 
-        private object String(DeserializationRequest request)
+        private object String(XObject xobject)
         {
-            return request.XRoot.GetValue();
+            return xobject.GetValue();
         }
 
-        private object Guid(DeserializationRequest requset)
+        private object Guid(XObject xobject)
         {
             Guid value;
-            if (System.Guid.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (System.Guid.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 
-        private object Decimal(DeserializationRequest requset)
+        private object Decimal(XObject xobject)
         {
             decimal value;
-            if (decimal.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (decimal.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 
-        private object DateTimeOffset(DeserializationRequest requset)
+        private object DateTimeOffset(XObject xobject)
         {
             DateTimeOffset value;
-            if (System.DateTimeOffset.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (System.DateTimeOffset.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 
-        private object DateTime(DeserializationRequest requset)
+        private object DateTime(XObject xobject)
         {
             DateTime value;
-            if (System.DateTime.TryParse(requset.XRoot.GetValue(), out value)) return value;
+            if (System.DateTime.TryParse(xobject.GetValue(), out value)) return value;
             throw new FormatException();
         }
 

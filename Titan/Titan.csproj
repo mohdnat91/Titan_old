@@ -62,8 +62,8 @@
     <Compile Include="Resolution\DictionaryValueResolutionHandler.cs" />
     <Compile Include="Resolution\IResolutionHandler.cs" />
     <Compile Include="Resolution\PropertyResolutionHandler.cs" />
-    <Compile Include="Utilities\AbstractRequest.cs" />
-    <Compile Include="Utilities\DeserializationRequest.cs" />
+    <Compile Include="Utilities\Metadata.cs" />
+    <Compile Include="Utilities\VisitorAction.cs" />
     <Compile Include="Utilities\XObjectMatcher.cs" />
     <Compile Include="Utilities\Exceptions\DeserializationException.cs" />
     <Compile Include="Utilities\Exceptions\NoMatchException.cs" />
@@ -76,7 +76,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\XObjectExtensions.cs" />
     <Compile Include="Visitors\DefaultDeserializationVisitor.cs" />
-    <Compile Include="Visitors\IDeserializationVisitor.cs" />
+    <Compile Include="Visitors\IVisitor.cs" />
     <Compile Include="XmlDeserializer.cs" />
   </ItemGroup>
   <ItemGroup />

@@ -44,7 +44,7 @@ namespace Titan.Conventions
         {
             ResolutionInfo info = new ResolutionInfo();
 
-            XElement element = request.XRoot;
+            XElement element = request.Metadata.Get<XElement>("xobject");
 
             string firstChildName = element.Elements().First().Name.LocalName;
             info.Predicate = (x => x.GetName() == firstChildName);
@@ -56,7 +56,7 @@ namespace Titan.Conventions
         private ResolutionInfo GetPropertyResolution(ResolutionRequest request)
         {
             ResolutionInfo info = new ResolutionInfo();
-            string propName = ((PropertyInfo)request.Context["property"]).Name.ToLower();
+            string propName = request.Metadata.Get<PropertyInfo>("property").Name.ToLower();
             info.Predicate = (x => x.GetName() == propName);
             info.NodeType = XmlNodeType.Element;
             return info;
@@ -67,9 +67,8 @@ namespace Titan.Conventions
             return resolutions[request.Type](request);
         }
 
-        public Type GetDefaultInterfaceImplementation(AbstractRequest request)
+        public Type GetDefaultInterfaceImplementation(Type type, Metadata metadata)
         {
-            Type type = (request as DeserializationRequest).TargetType;
             if (type.IsGenericType)
             {
                 Type generic = type.GetGenericTypeDefinition();

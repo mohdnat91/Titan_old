@@ -7,31 +7,33 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Titan.Attributes;
 using Titan.Utilities;
+using Titan.Visitors;
 
 namespace Titan.Deserializers
 {
     internal class NonGenericListDeserializer : ITypeDeserializer
     {
-        public bool CanHandle(DeserializationRequest request)
+        public bool CanHandle(Type type, XObject xobject)
         {
-            return request.XRoot is XElement && typeof(IList).IsAssignableFrom(request.TargetType);
+            return xobject is XElement && typeof(IList).IsAssignableFrom(type);
         }
 
 
-        public object Handle(DeserializationRequest request)
+        public object Handle(Type type, XObject xobject, Metadata metadata)
         {
-            IList collection = (IList)Activator.CreateInstance(request.TargetType);
+            IList collection = (IList)Activator.CreateInstance(type);
 
-            ResolutionRequest childResolution = new ResolutionRequest(ResolutionType.CollectionItem, (XElement)request.XRoot);
-            childResolution.Attributes = request.Attributes;
-            childResolution.Conventions = request.Conventions;
+            ResolutionRequest childResolution = new ResolutionRequest(ResolutionType.CollectionItem, xobject as XElement, metadata);
 
             IEnumerable<XObject> children = XObjectMatcher.GetMatchingXObjects(childResolution);
 
             foreach (XElement child in children)
             {
-                DeserializationRequest childReq = new DeserializationRequest(child, typeof(string), request.Context);
-                object value = request.Visitor.Deserialize(childReq);
+                Metadata childMeta = new Metadata(metadata);
+                childMeta.Set("xobject", child);
+
+                object value = typeof(string).Accept(metadata.Visitor, childMeta);
+
                 collection.Add(value);
             }
 

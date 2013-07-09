@@ -6,26 +6,25 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Titan.Utilities;
 using Titan.Utilities.Exceptions;
+using Titan.Visitors;
 
 namespace Titan.Deserializers
 {
     internal class KeyValuePairDeserializer : ITypeDeserializer
     {
-        public bool CanHandle(DeserializationRequest request)
+        public bool CanHandle(Type type, XObject xobject)
         {
-            return request.XRoot is XElement && request.TargetType.IsGenericType && request.TargetType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>);
+            return xobject is XElement && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(KeyValuePair<,>);
         }
 
-        public object Handle(DeserializationRequest request)
+        public object Handle(Type type, XObject xobject, Metadata metadata)
         {
-            XElement ERoot = request.XRoot as XElement;
+            XElement ERoot = xobject as XElement;
 
-            Type keyType = request.TargetType.GetGenericArguments()[0];
-            Type valueType = request.TargetType.GetGenericArguments()[1];
+            Type keyType = type.GetGenericArguments()[0];
+            Type valueType = type.GetGenericArguments()[1];
 
-            ResolutionRequest keyRequest = new ResolutionRequest(ResolutionType.DictionaryKey, ERoot);
-            keyRequest.Attributes = request.Attributes;
-            keyRequest.Conventions = request.Conventions;
+            ResolutionRequest keyRequest = new ResolutionRequest(ResolutionType.DictionaryKey, ERoot, metadata);
 
             XObject keyObj = XObjectMatcher.GetMatchingXObject(keyRequest);
 
@@ -34,13 +33,12 @@ namespace Titan.Deserializers
                 throw new NoMatchException(string.Format("Dictionary key resolution failed"));
             }
 
-            DeserializationRequest desReq1 = new DeserializationRequest(keyObj, keyType, request.Context);
+            Metadata keyMeta = new Metadata(metadata);
+            keyMeta.Set("xobject", keyObj);
 
-            dynamic key = request.Visitor.Deserialize(desReq1);
+            dynamic key = keyType.Accept(metadata.Visitor, keyMeta);
 
-            ResolutionRequest valueRequest = new ResolutionRequest(ResolutionType.DictionaryValue, ERoot);
-            valueRequest.Attributes = request.Attributes;
-            valueRequest.Conventions = request.Conventions;
+            ResolutionRequest valueRequest = new ResolutionRequest(ResolutionType.DictionaryValue, ERoot, metadata);
 
             XObject valueObj = XObjectMatcher.GetMatchingXObject(valueRequest);
 
@@ -49,9 +47,10 @@ namespace Titan.Deserializers
                 throw new NoMatchException(string.Format("Dictionary value resolution failed"));
             }
 
-            DeserializationRequest desReq2 = new DeserializationRequest(valueObj, valueType, request.Context);
+            Metadata valueMeta = new Metadata(metadata);
+            valueMeta.Set("xobject",valueObj);
 
-            dynamic value = request.Visitor.Deserialize(desReq2);
+            dynamic value = valueType.Accept(metadata.Visitor, valueMeta);
 
             dynamic kvp = typeof(KeyValuePair<,>).MakeGenericType(keyType, valueType).GetConstructor(new[] { keyType, valueType }).Invoke(new[] { key, value });
 

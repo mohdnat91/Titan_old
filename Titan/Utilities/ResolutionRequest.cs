@@ -9,21 +9,17 @@ using System.Xml.Linq;
 
 namespace Titan.Utilities
 {
-    public class ResolutionRequest : AbstractRequest
+    public class ResolutionRequest
     {
-        public new XElement XRoot { get { return base.XRoot as XElement; } set { base.XRoot = value; } }
+        public Metadata Metadata { get; set; }
         public ResolutionType Type { get; set; }
+        public XElement Root { get; set; }
 
-        public ResolutionRequest(ResolutionType type, XElement xroot)
+        public ResolutionRequest(ResolutionType type, XElement root, Metadata metadata)
         {
-            XRoot = xroot;
+            Root = root;
             Type = type;
-        }
-
-        public ResolutionRequest(ResolutionType type, XElement xroot, Dictionary<string,object> context) : base(context)
-        {
-            XRoot = xroot;
-            Type = type;
+            Metadata = metadata;
         }
     }
 }

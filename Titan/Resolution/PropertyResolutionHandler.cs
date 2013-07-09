@@ -14,16 +14,16 @@ namespace Titan.Resolution
         
         public ResolutionInfo Handle(ResolutionRequest request)
         {
-            ResolutionInfo info = request.Conventions.GetDefaultResolution(request);
+            ResolutionInfo info = request.Metadata.Conventions.GetDefaultResolution(request);
 
-            XmlElementAttribute element = request.GetAttribute<XmlElementAttribute>();
+            XmlElementAttribute element = request.Metadata.Attribute<XmlElementAttribute>();
             if (element != null)
             {
                 info.NodeType = XmlNodeType.Element;
                 if(!string.IsNullOrWhiteSpace(element.ElementName)) info.Predicate = (x => x.GetName() == element.ElementName);
             }
 
-            XmlAttributeAttribute attribute = request.GetAttribute<XmlAttributeAttribute>();
+            XmlAttributeAttribute attribute = request.Metadata.Attribute<XmlAttributeAttribute>();
             if (attribute != null)
             {
                 info.NodeType = XmlNodeType.Attribute;

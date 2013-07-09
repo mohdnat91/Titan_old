@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Titan.Utilities;
 
 namespace Titan.Deserializers
 {
     internal class EnumDeserializer : ITypeDeserializer
     {
-        public bool CanHandle(DeserializationRequest requset)
+        public bool CanHandle(Type type, XObject xobject)
         {
-            return requset.TargetType.IsEnum;
+            return type.IsEnum;
         }
 
-        public object Handle(DeserializationRequest requset)
+        public object Handle(Type type, XObject xobject, Metadata metadata)
         {
-            return Enum.Parse(requset.TargetType, requset.XRoot.GetValue());
+            return Enum.Parse(type, xobject.GetValue());
         }
     }
 }

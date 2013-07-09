@@ -11,6 +11,6 @@ namespace Titan.Conventions
     public interface IConventions
     {
         ResolutionInfo GetDefaultResolution(ResolutionRequest request);
-        Type GetDefaultInterfaceImplementation(AbstractRequest request);
+        Type GetDefaultInterfaceImplementation(Type type, Metadata metadata);
     }
 }

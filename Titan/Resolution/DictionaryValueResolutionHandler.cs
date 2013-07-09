@@ -13,9 +13,9 @@ namespace Titan.Resolution
     {
         public ResolutionInfo Handle(ResolutionRequest request)
         {
-            ResolutionInfo info = request.Conventions.GetDefaultResolution(request);
+            ResolutionInfo info = request.Metadata.Conventions.GetDefaultResolution(request);
 
-            XmlDictionaryValueAttribute attribute = request.GetAttribute<XmlDictionaryValueAttribute>();
+            XmlDictionaryValueAttribute attribute = request.Metadata.Attribute<XmlDictionaryValueAttribute>();
             if (attribute != null)
             {
                 if(!string.IsNullOrWhiteSpace(attribute.Name)) info.Predicate = (x => x.GetName() == attribute.Name);

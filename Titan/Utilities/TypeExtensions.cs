@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Titan.Visitors;
 
 namespace Titan.Utilities
 {
@@ -47,6 +49,22 @@ namespace Titan.Utilities
         public static bool IsNullable(this Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+        }
+
+        public static object Accept(this Type type, IVisitor visitor, Metadata metadata) {
+            object result;
+            VisitorAction action = visitor.VisitType(type, metadata, out result);
+
+            if (action == VisitorAction.Stop) return result;
+
+            foreach (PropertyInfo property in type.GetProperties().Where(p => p.CanWrite)) {
+                Metadata propMetadata = new Metadata(metadata);
+                propMetadata.Set("attributes", property.GetCustomAttributes<Attribute>());
+                propMetadata.Set("property", property);
+                visitor.VisitProperty(property, propMetadata, ref result);
+            }
+
+            return result;
         }
     }
 }

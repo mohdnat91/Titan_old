@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Titan.Attributes;
+using Titan.Conventions;
 using Titan.Utilities;
 
 namespace Titan.Resolution
@@ -13,9 +14,9 @@ namespace Titan.Resolution
     {
         public ResolutionInfo Handle(ResolutionRequest request)
         {
-            ResolutionInfo info = request.Conventions.GetDefaultResolution(request);
+            ResolutionInfo info = request.Metadata.Conventions.GetDefaultResolution(request);
 
-            XmlCollectionItemAttribute attribute = request.GetAttribute<XmlCollectionItemAttribute>();
+            XmlCollectionItemAttribute attribute = request.Metadata.Attribute<XmlCollectionItemAttribute>();
             if (attribute != null)
             {
                 if (!string.IsNullOrWhiteSpace(attribute.Name)) info.Predicate = (x => x.GetName() == attribute.Name);

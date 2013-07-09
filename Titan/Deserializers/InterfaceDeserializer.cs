@@ -3,40 +3,41 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using Titan.Utilities;
 using Titan.Utilities.Exceptions;
+using Titan.Visitors;
 
 namespace Titan.Deserializers
 {
     internal class InterfaceDeserializer : ITypeDeserializer
     {
-        public bool CanHandle(DeserializationRequest request)
+        public bool CanHandle(Type type, XObject xobject)
         {
-            return request.TargetType.IsInterface;
+            return type.IsInterface;
         }
 
-        public object Handle(DeserializationRequest request)
+        public object Handle(Type type, XObject xobject, Metadata metadata)
         {
 
-            Type concrete = GetGivenType(request) ?? request.Conventions.GetDefaultInterfaceImplementation(request);
+            Type concrete = GetGivenType(metadata) ?? metadata.Conventions.GetDefaultInterfaceImplementation(type, metadata);
             if (concrete == null)
             {
-                throw new DeserializationException(string.Format("No implementation was found for interface '{0}'", request.TargetType));
+                throw new DeserializationException(string.Format("No implementation was found for interface '{0}'", type));
             }
-            request.TargetType = concrete;
-            return request.Visitor.Deserialize(request);
+            return concrete.Accept(metadata.Visitor, metadata);
         }
 
-        private Type GetGivenType(DeserializationRequest request)
+        private Type GetGivenType(Metadata metadata)
         {
-            XmlElementAttribute element = request.GetAttribute<XmlElementAttribute>();
+            XmlElementAttribute element = metadata.Attribute<XmlElementAttribute>();
             if (element != null && element.Type != null)
             {
                 return element.Type;
             }
 
-            XmlAttributeAttribute attribute = request.GetAttribute<XmlAttributeAttribute>();
+            XmlAttributeAttribute attribute = metadata.Attribute<XmlAttributeAttribute>();
             if (attribute != null && attribute.Type != null)
             {
                 return attribute.Type;

@@ -51,15 +51,15 @@ namespace Titan.Utilities
 
             if (info.NodeType == XmlNodeType.Attribute)
             {
-                return request.XRoot.Attributes().Where(info.Predicate);
+                return request.Root.Attributes().Where(info.Predicate);
             }
             else if (info.NodeType == XmlNodeType.Element)
             {
-                return request.XRoot.Elements().Where(info.Predicate);
+                return request.Root.Elements().Where(info.Predicate);
             }
             else if (info.NodeType == XmlNodeType.Text)
             {
-                return new List<XObject>() { request.XRoot };
+                return new List<XObject>() { request.Root };
             }
             else if (info.NodeType == XmlNodeType.None)
             {

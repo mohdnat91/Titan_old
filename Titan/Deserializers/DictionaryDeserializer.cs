@@ -6,32 +6,33 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Titan.Attributes;
 using Titan.Utilities;
+using Titan.Visitors;
 
 namespace Titan.Deserializers
 {
     internal class DictionaryDeserializer : ITypeDeserializer
     {
-        public bool CanHandle(DeserializationRequest request)
+        public bool CanHandle(Type type, XObject xobject)
         {
-            return request.XRoot is XElement && request.TargetType.IsAssignableToGenericType(typeof(IDictionary<,>));
+            return xobject is XElement && type.IsAssignableToGenericType(typeof(IDictionary<,>));
         }
 
-        public object Handle(DeserializationRequest request)
+        public object Handle(Type type, XObject xobject, Metadata metadata)
         {
-            dynamic dictionary = Activator.CreateInstance(request.TargetType);
-            XElement ERoot = request.XRoot as XElement;
+            dynamic dictionary = Activator.CreateInstance(type);
+            XElement ERoot = xobject as XElement;
 
-            Type[] types = request.TargetType.GetParentTypeParameters(typeof(IDictionary<,>));
+            Type[] types = type.GetParentTypeParameters(typeof(IDictionary<,>));
             Type kvp = typeof(KeyValuePair<,>).MakeGenericType(types);
 
             IEnumerable<XElement> children = ERoot.Elements();
 
             foreach (XElement child in children)
             {
-                DeserializationRequest childReq = new DeserializationRequest(child, kvp, request.Context);
-                childReq.Attributes = request.Attributes;
+                Metadata childMeta = new Metadata(metadata);
+                childMeta.Set("xobject", child);
 
-                dynamic value = request.Visitor.Deserialize(childReq);
+                dynamic value = kvp.Accept(metadata.Visitor, childMeta);
                 dictionary[value.Key] = value.Value;
             }
 

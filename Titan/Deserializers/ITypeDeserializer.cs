@@ -10,8 +10,7 @@ namespace Titan.Deserializers
 {
     public interface ITypeDeserializer
     {
-        bool CanHandle(DeserializationRequest request);
-
-        object Handle(DeserializationRequest request);
+        bool CanHandle(Type type, XObject xobject);
+        object Handle(Type type, XObject xobject, Metadata metadata);
     }
 }

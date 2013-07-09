@@ -5,32 +5,33 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Titan.Utilities;
+using Titan.Visitors;
 
 namespace Titan.Deserializers
 {
     internal class GenericListDeserializer : ITypeDeserializer
     {
-        public bool CanHandle(DeserializationRequest request)
+        public bool CanHandle(Type type, XObject xobject)
         {
-            return request.XRoot is XElement && request.TargetType.IsAssignableToGenericType(typeof(IList<>));
+            return xobject is XElement && type.IsAssignableToGenericType(typeof(IList<>));
         }
 
-        public object Handle(DeserializationRequest request)
+        public object Handle(Type type, XObject xobject, Metadata metadata)
         {
-            dynamic collection = Activator.CreateInstance(request.TargetType);
+            dynamic collection = Activator.CreateInstance(type);
 
-            ResolutionRequest childResolution = new ResolutionRequest(ResolutionType.CollectionItem, request.XRoot as XElement);
-            childResolution.Attributes = request.Attributes;
-            childResolution.Conventions = request.Conventions;
+            ResolutionRequest childResolution = new ResolutionRequest(ResolutionType.CollectionItem, xobject as XElement, metadata);
 
             IEnumerable<XObject> children = XObjectMatcher.GetMatchingXObjects(childResolution);
 
-            Type childType = request.TargetType.GetParentTypeParameters(typeof(IList<>))[0];
+            Type childType = type.GetParentTypeParameters(typeof(IList<>)).Single();
 
             foreach (XElement child in children)
             {
-                DeserializationRequest childReq = new DeserializationRequest(child, childType, request.Context);
-                dynamic value = request.Visitor.Deserialize(childReq);
+                Metadata childMetadata = new Metadata(metadata);
+                childMetadata.Set("xobject", child);
+
+                dynamic value = childType.Accept(metadata.Visitor, childMetadata);
                
                 collection.Add(value);
             }
