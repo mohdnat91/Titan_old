@@ -28,10 +28,9 @@ namespace Titan
 
         public T Deserialize<T>()
         {
-            DeserializationRequest request = new DeserializationRequest() { TargetType = typeof(T), Root = Document.Root };
-            request.Conventions = new DefaultConventions();
+            IConventions conventions = new DefaultConventions();
             IDeserializationVisitor visitor = new DefaultDeserializationVisitor();
-            request.Visitor = visitor;
+            DeserializationRequest request = new DeserializationRequest(Document.Root, typeof(T), visitor, conventions);
             object value = visitor.Deserialize(request);
             return (T)value;
         }

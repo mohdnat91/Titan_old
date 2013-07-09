@@ -64,7 +64,7 @@
     <Compile Include="Resolution\PropertyResolutionHandler.cs" />
     <Compile Include="Utilities\AbstractRequest.cs" />
     <Compile Include="Utilities\DeserializationRequest.cs" />
-    <Compile Include="Utilities\DeserializationUtilities.cs" />
+    <Compile Include="Utilities\XObjectMatcher.cs" />
     <Compile Include="Utilities\Exceptions\DeserializationException.cs" />
     <Compile Include="Utilities\Exceptions\NoMatchException.cs" />
     <Compile Include="Utilities\Exceptions\ResolutionException.cs" />

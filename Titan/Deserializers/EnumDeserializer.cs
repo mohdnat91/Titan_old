@@ -16,7 +16,7 @@ namespace Titan.Deserializers
 
         public object Handle(DeserializationRequest requset)
         {
-            return Enum.Parse(requset.TargetType, requset.Root.GetValue());
+            return Enum.Parse(requset.TargetType, requset.XRoot.GetValue());
         }
     }
 }

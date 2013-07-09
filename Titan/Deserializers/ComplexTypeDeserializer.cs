@@ -15,7 +15,7 @@ namespace Titan.Deserializers
     {
         public bool CanHandle(DeserializationRequest request)
         {
-            return request.Root is XElement;
+            return request.XRoot is XElement;
         }
 
         public object Handle(DeserializationRequest request)
@@ -26,14 +26,12 @@ namespace Titan.Deserializers
 
             foreach (PropertyInfo property in properties)
             {
-                ResolutionRequest resolve = new ResolutionRequest();
-                resolve.Root = request.Root as XElement;
+                ResolutionRequest resolve = new ResolutionRequest(ResolutionType.Property, request.XRoot as XElement);
                 resolve.Attributes = property.GetCustomAttributes<Attribute>();
-                resolve.Type = ResolutionType.Property;
                 resolve.Context["property"] = property;
                 resolve.Conventions = request.Conventions;
 
-                XObject matching = DeserializationUtilities.GetMatchingXObject(resolve);
+                XObject matching = XObjectMatcher.GetMatchingXObject(resolve);
                 if (matching == null)
                 {
                     if (property.PropertyType.IsNullable())
@@ -47,9 +45,7 @@ namespace Titan.Deserializers
                     }
                 }
 
-                DeserializationRequest propReq = new DeserializationRequest() { TargetType = property.PropertyType, Root = matching, Attributes = property.GetCustomAttributes<Attribute>() };
-                propReq.Conventions = request.Conventions;
-                propReq.Visitor = request.Visitor;
+                DeserializationRequest propReq = new DeserializationRequest(matching, property.PropertyType, request.Context) { Attributes = property.GetCustomAttributes<Attribute>() };
 
                 object value = request.Visitor.Deserialize(propReq);
                 property.SetValue(target, value);

@@ -11,7 +11,19 @@ namespace Titan.Utilities
 {
     public class ResolutionRequest : AbstractRequest
     {
-        public new XElement Root { get { return base.Root as XElement; } set { base.Root = value; } }
+        public new XElement XRoot { get { return base.XRoot as XElement; } set { base.XRoot = value; } }
         public ResolutionType Type { get; set; }
+
+        public ResolutionRequest(ResolutionType type, XElement xroot)
+        {
+            XRoot = xroot;
+            Type = type;
+        }
+
+        public ResolutionRequest(ResolutionType type, XElement xroot, Dictionary<string,object> context) : base(context)
+        {
+            XRoot = xroot;
+            Type = type;
+        }
     }
 }

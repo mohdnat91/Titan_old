@@ -10,7 +10,7 @@ namespace Titan.Utilities
 {
     public abstract class AbstractRequest
     {
-        public virtual XObject Root { get; set; }
+        public virtual XObject XRoot { get; set; }
         public Dictionary<string, object> Context { get; set; }
 
         public T Get<T>(string key)
@@ -26,7 +26,7 @@ namespace Titan.Utilities
         {
             get
             {
-                return Get<IEnumerable<Attribute>>("attributes");
+                return Get<IEnumerable<Attribute>>("attributes") ?? Enumerable.Empty<Attribute>();
             }
 
             set
@@ -50,7 +50,7 @@ namespace Titan.Utilities
 
         public T GetAttribute<T>() where T : Attribute
         {
-            return GetAttributes<T>().Single();
+            return GetAttributes<T>().SingleOrDefault();
         }
 
         public IEnumerable<T> GetAttributes<T>() where T : Attribute

@@ -14,11 +14,11 @@ using Titan.Utilities.Exceptions;
 
 namespace Titan.Utilities
 {
-    public static class DeserializationUtilities
+    public static class XObjectMatcher
     {
         private static Dictionary<ResolutionType, IResolutionHandler> resolutionHandlers;
 
-        static DeserializationUtilities()
+        static XObjectMatcher()
         {
             resolutionHandlers = new Dictionary<ResolutionType, IResolutionHandler>();
             resolutionHandlers.Add(ResolutionType.Property, new PropertyResolutionHandler());
@@ -51,15 +51,15 @@ namespace Titan.Utilities
 
             if (info.NodeType == XmlNodeType.Attribute)
             {
-                return request.Root.Attributes().Where(info.Predicate);
+                return request.XRoot.Attributes().Where(info.Predicate);
             }
             else if (info.NodeType == XmlNodeType.Element)
             {
-                return request.Root.Elements().Where(info.Predicate);
+                return request.XRoot.Elements().Where(info.Predicate);
             }
             else if (info.NodeType == XmlNodeType.Text)
             {
-                return new List<XObject>() { request.Root };
+                return new List<XObject>() { request.XRoot };
             }
             else if (info.NodeType == XmlNodeType.None)
             {

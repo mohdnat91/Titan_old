@@ -44,7 +44,7 @@ namespace Titan.Conventions
         {
             ResolutionInfo info = new ResolutionInfo();
 
-            XElement element = request.Root;
+            XElement element = request.XRoot;
 
             string firstChildName = element.Elements().First().Name.LocalName;
             info.Predicate = (x => x.GetName() == firstChildName);

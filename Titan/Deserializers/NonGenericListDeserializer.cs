@@ -14,7 +14,7 @@ namespace Titan.Deserializers
     {
         public bool CanHandle(DeserializationRequest request)
         {
-            return request.Root is XElement && typeof(IList).IsAssignableFrom(request.TargetType);
+            return request.XRoot is XElement && typeof(IList).IsAssignableFrom(request.TargetType);
         }
 
 
@@ -22,21 +22,15 @@ namespace Titan.Deserializers
         {
             IList collection = (IList)Activator.CreateInstance(request.TargetType);
 
-            XElement ERoot = request.Root as XElement;
-
-            ResolutionRequest childResolution = new ResolutionRequest();
-            childResolution.Root = ERoot;
+            ResolutionRequest childResolution = new ResolutionRequest(ResolutionType.CollectionItem, (XElement)request.XRoot);
             childResolution.Attributes = request.Attributes;
-            childResolution.Type = ResolutionType.CollectionItem;
             childResolution.Conventions = request.Conventions;
 
-            IEnumerable<XObject> children = DeserializationUtilities.GetMatchingXObjects(childResolution);
+            IEnumerable<XObject> children = XObjectMatcher.GetMatchingXObjects(childResolution);
 
             foreach (XElement child in children)
             {
-                DeserializationRequest childReq = new DeserializationRequest() { TargetType = typeof(string), Root = child };
-                childReq.Conventions = request.Conventions;
-                childReq.Visitor = request.Visitor;
+                DeserializationRequest childReq = new DeserializationRequest(child, typeof(string), request.Context);
                 object value = request.Visitor.Deserialize(childReq);
                 collection.Add(value);
             }

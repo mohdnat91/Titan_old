@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Titan.Conventions;
 using Titan.Visitors;
 
 namespace Titan.Utilities
@@ -24,5 +25,18 @@ namespace Titan.Utilities
 
         }
 
+        public DeserializationRequest(XObject xroot, Type target, IDeserializationVisitor visitor, IConventions conventions)
+        {
+            XRoot = xroot;
+            TargetType = target;
+            Visitor = visitor;
+            Conventions = conventions;
+        }
+
+        public DeserializationRequest(XObject xroot, Type target, Dictionary<string, object> context) : base(context)
+        {
+            XRoot = xroot;
+            TargetType = target;
+        }
     }
 }

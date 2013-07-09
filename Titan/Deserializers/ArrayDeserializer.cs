@@ -13,23 +13,19 @@ namespace Titan.Deserializers
     {
         public bool CanHandle(DeserializationRequest request)
         {
-            return request.Root is XElement && request.TargetType.IsArray;
+            return request.XRoot is XElement && request.TargetType.IsArray;
         }
 
 
         public object Handle(DeserializationRequest request)
         {
-            XElement ERoot = request.Root as XElement;
-
             Type childType = request.TargetType.GetElementType();
 
-            ResolutionRequest childResolution = new ResolutionRequest();
-            childResolution.Root = ERoot;
+            ResolutionRequest childResolution = new ResolutionRequest(ResolutionType.CollectionItem, request.XRoot as XElement);
             childResolution.Attributes = request.Attributes;
-            childResolution.Type = ResolutionType.CollectionItem;
             childResolution.Conventions = request.Conventions;
 
-            IEnumerable<XObject> children = DeserializationUtilities.GetMatchingXObjects(childResolution);
+            IEnumerable<XObject> children = XObjectMatcher.GetMatchingXObjects(childResolution);
 
             dynamic collection = Array.CreateInstance(childType, children.Count());
 
@@ -37,9 +33,7 @@ namespace Titan.Deserializers
 
             foreach (XElement child in children)
             {
-                DeserializationRequest childReq = new DeserializationRequest() { TargetType = childType, Root = child };
-                childReq.Conventions = request.Conventions;
-                childReq.Visitor = request.Visitor;
+                DeserializationRequest childReq = new DeserializationRequest(child, childType, request.Context);
                 dynamic value = request.Visitor.Deserialize(childReq);
                 collection[i++] = value;
             }

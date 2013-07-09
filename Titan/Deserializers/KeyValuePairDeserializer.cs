@@ -13,57 +13,43 @@ namespace Titan.Deserializers
     {
         public bool CanHandle(DeserializationRequest request)
         {
-            return request.Root is XElement && request.TargetType.IsGenericType && request.TargetType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>);
+            return request.XRoot is XElement && request.TargetType.IsGenericType && request.TargetType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>);
         }
 
         public object Handle(DeserializationRequest request)
         {
-            XElement ERoot = request.Root as XElement;
+            XElement ERoot = request.XRoot as XElement;
 
             Type keyType = request.TargetType.GetGenericArguments()[0];
             Type valueType = request.TargetType.GetGenericArguments()[1];
 
-            ResolutionRequest keyRequest = new ResolutionRequest();
+            ResolutionRequest keyRequest = new ResolutionRequest(ResolutionType.DictionaryKey, ERoot);
             keyRequest.Attributes = request.Attributes;
             keyRequest.Conventions = request.Conventions;
-            keyRequest.Root = ERoot;
-            keyRequest.Type = ResolutionType.DictionaryKey;
 
-            XObject keyObj = DeserializationUtilities.GetMatchingXObject(keyRequest);
+            XObject keyObj = XObjectMatcher.GetMatchingXObject(keyRequest);
 
             if (keyObj == null)
             {
                 throw new NoMatchException(string.Format("Dictionary key resolution failed"));
             }
 
-            DeserializationRequest desReq1 = new DeserializationRequest();
-            desReq1.TargetType = keyType;
-            desReq1.Root = keyObj;
-            desReq1.Conventions = request.Conventions;
-            desReq1.Attributes = request.Attributes;
-            desReq1.Visitor = request.Visitor;
+            DeserializationRequest desReq1 = new DeserializationRequest(keyObj, keyType, request.Context);
 
             dynamic key = request.Visitor.Deserialize(desReq1);
 
-            ResolutionRequest valueRequest = new ResolutionRequest();
+            ResolutionRequest valueRequest = new ResolutionRequest(ResolutionType.DictionaryValue, ERoot);
             valueRequest.Attributes = request.Attributes;
             valueRequest.Conventions = request.Conventions;
-            valueRequest.Root = ERoot;
-            valueRequest.Type = ResolutionType.DictionaryValue;
 
-            XObject valueObj = DeserializationUtilities.GetMatchingXObject(valueRequest);
+            XObject valueObj = XObjectMatcher.GetMatchingXObject(valueRequest);
 
             if (valueObj == null)
             {
                 throw new NoMatchException(string.Format("Dictionary value resolution failed"));
             }
 
-            DeserializationRequest desReq2 = new DeserializationRequest();
-            desReq2.TargetType = valueType;
-            desReq2.Root = valueObj;
-            desReq2.Conventions = request.Conventions;
-            desReq2.Attributes = request.Attributes;
-            desReq2.Visitor = request.Visitor;
+            DeserializationRequest desReq2 = new DeserializationRequest(valueObj, valueType, request.Context);
 
             dynamic value = request.Visitor.Deserialize(desReq2);
 
